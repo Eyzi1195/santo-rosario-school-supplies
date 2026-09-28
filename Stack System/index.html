@@ -1326,115 +1326,258 @@
          ADD USER MODAL
     ====================================================== -->
 
-    <div
-        class="modal-overlay"
-        id="userModal"
-    >
+    <!-- =====================================================
+     ADD USER MODAL
+===================================================== -->
 
-        <div class="modal">
+<div class="modal-overlay" id="userModal">
 
-            <div class="modal-header">
+    <div class="modal">
 
-                <div>
-                    <h3>Add User</h3>
-                    <p>Create a new system user.</p>
-                </div>
+        <div class="modal-header">
 
-                <button
-                    class="close-modal"
-                    id="closeUserModal"
+            <div>
+                <h3>Add User</h3>
+                <p>Create a new system user.</p>
+            </div>
+
+            <button
+                type="button"
+                class="close-modal"
+                id="closeUserModal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <form id="userForm">
+
+            <div class="form-group">
+
+                <label for="userName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="userName"
+                    placeholder="Enter full name"
+                    required
                 >
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
 
             </div>
 
 
-            <form id="userForm">
+            <div class="form-group">
 
-                <div class="form-group">
+                <label for="username">
+                    Username
+                </label>
 
-                    <label for="userName">
-                        Full Name
-                    </label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter username"
+                    required
+                >
 
-                    <input
-                        type="text"
-                        id="userName"
-                        placeholder="Enter full name"
-                        required
-                    >
-
-                </div>
+            </div>
 
 
-                <div class="form-group">
+            <div class="form-group">
 
-                    <label for="username">
-                        Username
-                    </label>
+                <label for="userRole">
+                    Role
+                </label>
 
-                    <input
-                        type="text"
-                        id="username"
-                        placeholder="Enter username"
-                        required
-                    >
+                <select id="userRole">
 
-                </div>
+                    <option value="Administrator">
+                        Administrator
+                    </option>
 
+                    <option value="Staff">
+                        Staff
+                    </option>
 
-                <div class="form-group">
+                    <option value="Teacher">
+                        Teacher
+                    </option>
 
-                    <label for="userRole">
-                        Role
-                    </label>
+                </select>
 
-                    <select id="userRole">
-
-                        <option value="Administrator">
-                            Administrator
-                        </option>
-
-                        <option value="Staff">
-                            Staff
-                        </option>
-
-                        <option value="Teacher">
-                            Teacher
-                        </option>
-
-                    </select>
-
-                </div>
+            </div>
 
 
-                <div class="modal-actions">
+            <div class="modal-actions">
 
-    <button
-        type="button"
-        class="cancel-btn"
-        id="cancelUser"
-    >
-        Cancel
-    </button>
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelUser"
+                >
+                    Cancel
+                </button>
 
-    <button
-        type="submit"
-        class="save-btn"
-    >
-        <i class="fa-solid fa-user-plus"></i>
-        Add User
-    </button>
 
-</div>
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    <i class="fa-solid fa-user-plus"></i>
+                    Add User
+                </button>
 
-            </form>
+            </div>
 
-        </div>
+        </form>
 
     </div>
 
+</div>
+
+
+
+<!-- =====================================================
+     EDIT USER MODAL
+===================================================== -->
+
+<div class="modal-overlay" id="editUserModal">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h3>Edit User</h3>
+                <p>Update user information.</p>
+            </div>
+
+            <button
+                type="button"
+                class="close-modal"
+                id="closeEditUserModal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <form id="editUserForm">
+
+            <input
+                type="hidden"
+                id="editUserId"
+            >
+
+
+            <div class="form-group">
+
+                <label for="editUserName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="editUserName"
+                    placeholder="Enter full name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="editUsername">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="editUsername"
+                    placeholder="Enter username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="editUserRole">
+                    Role
+                </label>
+
+                <select id="editUserRole">
+
+                    <option value="Administrator">
+                        Administrator
+                    </option>
+
+                    <option value="Staff">
+                        Staff
+                    </option>
+
+                    <option value="Teacher">
+                        Teacher
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="editUserStatus">
+                    Status
+                </label>
+
+                <select id="editUserStatus">
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelEditUser"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    <i class="fa-solid fa-save"></i>
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 
     <!-- =====================================================
