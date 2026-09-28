@@ -12,7 +12,19 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_LEg17vE4VN7RIIj-n86SKQ_cBMhMvx6
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+        auth: {
+            // Do not remember login after refresh/restart
+            persistSession: false,
+
+            // Session only lives while this page is open
+            autoRefreshToken: false,
+
+            // No automatic login from URL
+            detectSessionInUrl: false
+        }
+    }
 );
 
 // =====================================================
@@ -242,14 +254,6 @@ supabaseClient.auth.onAuthStateChange(
 
 // Check authentication
 checkAuth();
-
-/* =====================================================
-   STORAGE
-===================================================== */
-
-const SUPPLIES_KEY = "schoolSupplies";
-const USERS_KEY = "systemUsers";
-
 
 /* =====================================================
    DEFAULT DATA
@@ -2188,251 +2192,594 @@ document.addEventListener("click", async function(event) {
 
 });
 
-/* =====================================================
-   USERS
-===================================================== */
+// ==========================================
+// USERS MANAGEMENT - SUPABASE
+// ==========================================
 
-function renderUsers() {
+async function renderUsers(searchTerm = "") {
 
-    const users = getUsers();
+    const body = document.getElementById("usersBody");
 
-    const body =
-        document.getElementById("usersBody");
+    if (!body) return;
 
+    body.innerHTML = `
+        <tr>
+            <td colspan="5" style="text-align:center;padding:35px;">
+                Loading users...
+            </td>
+        </tr>
+    `;
 
-    body.innerHTML = "";
+    try {
 
+        const { data, error } = await supabaseClient
+            .from("users")
+            .select("*")
+            .order("id", { ascending: true });
 
-    users.forEach(user => {
+        if (error) {
 
-        body.innerHTML += `
+            console.error("USERS LOAD ERROR:", error);
 
-            <tr>
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align:center;padding:35px;">
+                        Failed to load users.
+                    </td>
+                </tr>
+            `;
 
-                <td>
-                    ${escapeHTML(user.name)}
-                </td>
+            return;
+        }
 
-                <td>
-                    ${escapeHTML(user.username)}
-                </td>
+        let users = data || [];
 
-                <td>
-                    ${escapeHTML(user.role)}
-                </td>
+        // Search
+        const search = searchTerm.trim().toLowerCase();
 
-                <td>
+        if (search) {
 
-                    <span class="status in-stock">
-                        ${escapeHTML(user.status)}
-                    </span>
-
-                </td>
-
-                <td>
-
-                    ${
-                        user.username === "admin"
-
-                        ? `
-                            <span style="color:#64748b;">
-                                Default Account
-                            </span>
-                          `
-
-                        : `
-                            <button
-                                class="action-btn delete-btn"
-                                onclick="deleteUser(${user.id})"
-                            >
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                          `
-                    }
-
-                </td>
-
-            </tr>
-
-        `;
-
-    });
-
-}
-
-
-/* =====================================================
-   ADD USER MODAL
-===================================================== */
-
-document.getElementById("addUserBtn")
-    .addEventListener("click", function() {
-
-        document.getElementById("userModal")
-            .classList.add("show");
-
-    });
-
-
-function closeUserModal() {
-
-    document.getElementById("userModal")
-        .classList.remove("show");
-
-}
-
-
-document.getElementById("closeUserModal")
-    .addEventListener(
-        "click",
-        closeUserModal
-    );
-
-
-document.getElementById("cancelUser")
-    .addEventListener(
-        "click",
-        closeUserModal
-    );
-
-
-document.getElementById("userModal")
-    .addEventListener("click", function(event) {
-
-        if (event.target === this) {
-
-            closeUserModal();
+            users = users.filter(user =>
+                user.name.toLowerCase().includes(search) ||
+                user.username.toLowerCase().includes(search) ||
+                user.role.toLowerCase().includes(search) ||
+                user.status.toLowerCase().includes(search)
+            );
 
         }
 
-    });
+        if (users.length === 0) {
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align:center;padding:35px;">
+                        No users found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        body.innerHTML = "";
+
+        users.forEach(user => {
+
+            const statusClass =
+                user.status === "Active"
+                    ? "in-stock"
+                    : "low-stock";
+
+            const isAdmin =
+                user.username.toLowerCase() === "admin";
+
+            body.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${escapeHTML(user.name)}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(user.username)}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(user.role)}
+                    </td>
+
+                    <td>
+                        <span class="status ${statusClass}">
+                            ${escapeHTML(user.status)}
+                        </span>
+                    </td>
+
+                    <td>
+
+                        ${
+                            isAdmin
+
+                            ? `
+                                <span style="color:#64748b;">
+                                    Default Account
+                                </span>
+                              `
+
+                            : `
+                                <button
+                                    class="action-btn"
+                                    onclick="editUser(${user.id})"
+                                    title="Edit User"
+                                >
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+
+                                <button
+                                    class="action-btn delete-btn"
+                                    onclick="deleteUser(${user.id})"
+                                    title="Delete User"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                              `
+                        }
+
+                    </td>
+
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+
+        console.error("Unexpected users error:", error);
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align:center;padding:35px;">
+                    Something went wrong while loading users.
+                </td>
+            </tr>
+        `;
+    }
+}
 
 
 /* =====================================================
    ADD USER
 ===================================================== */
 
-document.getElementById("userForm")
-    .addEventListener("submit", function(event) {
+const userForm = document.getElementById("userForm");
+
+if (userForm) {
+
+    userForm.addEventListener("submit", async function(event) {
 
         event.preventDefault();
 
-
         const name =
-            document.getElementById("userName")
-                .value.trim();
-
+            document.getElementById("userName").value.trim();
 
         const username =
-            document.getElementById("username")
-                .value.trim();
-
+            document.getElementById("username").value.trim();
 
         const role =
-            document.getElementById("userRole")
-                .value;
-
+            document.getElementById("userRole").value;
 
         if (!name || !username) {
+            alert("Please complete all required fields.");
+            return;
+        }
+
+        try {
+
+            console.log("Adding user...");
+            console.log({
+                name,
+                username,
+                role
+            });
+
+            const { error } = await supabaseClient
+                .from("users")
+                .insert({
+                    name: name,
+                    username: username,
+                    role: role,
+                    status: "Active"
+                });
+
+            if (error) {
+
+                console.error("ADD USER ERROR:", error);
+
+                if (error.code === "23505") {
+                    alert("Username already exists.");
+                } else {
+                    alert(
+                        "Failed to add user:\n\n" +
+                        error.message
+                    );
+                }
+
+                return;
+            }
+
+            // Clear form
+            userForm.reset();
+
+            // Close modal
+            closeUserModal();
+
+            // Refresh users table
+            await renderUsers();
+
+            alert("User successfully added!");
+
+        } catch (error) {
+
+            console.error(
+                "Unexpected add user error:",
+                error
+            );
 
             alert(
-                "Please complete all required fields."
+                "Something went wrong:\n\n" +
+                error.message
             );
-
-            return;
-
         }
-
-
-        const users = getUsers();
-
-
-        const usernameExists =
-            users.some(
-                user =>
-                    user.username.toLowerCase() ===
-                    username.toLowerCase()
-            );
-
-
-        if (usernameExists) {
-
-            alert("Username already exists.");
-
-            return;
-
-        }
-
-
-        users.push({
-
-            id: Date.now(),
-
-            name: name,
-
-            username: username,
-
-            role: role,
-
-            status: "Active"
-
-        });
-
-
-        saveUsers(users);
-
-
-        this.reset();
-
-        closeUserModal();
-
-        renderUsers();
-
-
-        alert("User successfully added!");
 
     });
 
-
+}
 /* =====================================================
-   DELETE USER
+   ADD USER MODAL CONTROLS
 ===================================================== */
 
-function deleteUser(id) {
+const addUserBtn =
+    document.getElementById("addUserBtn");
 
-    const users = getUsers();
+const userModal =
+    document.getElementById("userModal");
+
+const closeUserModalBtn =
+    document.getElementById("closeUserModal");
+
+const cancelUserBtn =
+    document.getElementById("cancelUser");
 
 
-    const user = users.find(
-        item => item.id === id
+function closeUserModal() {
+
+    if (userModal) {
+        userModal.classList.remove("show");
+    }
+
+}
+
+
+if (addUserBtn) {
+
+    addUserBtn.addEventListener("click", function() {
+
+        if (userModal) {
+            userModal.classList.add("show");
+        }
+
+    });
+
+}
+
+
+if (closeUserModalBtn) {
+
+    closeUserModalBtn.addEventListener(
+        "click",
+        closeUserModal
+    );
+
+}
+
+
+if (cancelUserBtn) {
+
+    cancelUserBtn.addEventListener(
+        "click",
+        closeUserModal
+    );
+
+}
+
+
+if (userModal) {
+
+    userModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (event.target === this) {
+
+                closeUserModal();
+
+            }
+
+        }
+    );
+
+}
+// EDIT USER
+// ==========================================
+
+async function editUser(id) {
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("users")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (error) {
+
+            console.error("GET USER ERROR:", error);
+
+            alert(
+                "Failed to load user:\n\n" +
+                error.message
+            );
+
+            return;
+        }
+
+        if (!data) {
+
+            alert("User not found.");
+            return;
+        }
+
+        document.getElementById("editUserId").value =
+            data.id;
+
+        document.getElementById("editUserName").value =
+            data.name;
+
+        document.getElementById("editUsername").value =
+            data.username;
+
+        document.getElementById("editUserRole").value =
+            data.role;
+
+        document.getElementById("editUserStatus").value =
+            data.status;
+
+        document.getElementById("editUserModal")
+            .classList.add("show");
+
+    } catch (error) {
+
+        console.error("Unexpected edit user error:", error);
+
+        alert(
+            "Something went wrong:\n\n" +
+            error.message
+        );
+    }
+}
+
+document.getElementById("editUserForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const id =
+            Number(
+                document.getElementById("editUserId")
+                    .value
+            );
+
+        const name =
+            document.getElementById("editUserName")
+                .value
+                .trim();
+
+        const username =
+            document.getElementById("editUsername")
+                .value
+                .trim();
+
+        const role =
+            document.getElementById("editUserRole")
+                .value;
+
+        const status =
+            document.getElementById("editUserStatus")
+                .value;
+
+        if (!name || !username) {
+
+            alert("Please complete all required fields.");
+            return;
+        }
+
+        try {
+
+            const { error } = await supabaseClient
+                .from("users")
+                .update({
+                    name: name,
+                    username: username,
+                    role: role,
+                    status: status
+                })
+                .eq("id", id);
+
+            if (error) {
+
+                console.error("UPDATE USER ERROR:", error);
+
+                if (error.code === "23505") {
+
+                    alert("Username already exists.");
+
+                } else {
+
+                    alert(
+                        "Failed to update user:\n\n" +
+                        error.message
+                    );
+                }
+
+                return;
+            }
+
+            closeEditUserModal();
+
+            await renderUsers();
+
+            alert("User updated successfully!");
+
+        } catch (error) {
+
+            console.error(
+                "Unexpected update user error:",
+                error
+            );
+
+            alert(
+                "Something went wrong:\n\n" +
+                error.message
+            );
+        }
+
+    });
+
+    // ==========================================
+// CLOSE EDIT USER MODAL
+// ==========================================
+
+function closeEditUserModal() {
+
+    document.getElementById("editUserModal")
+        .classList.remove("show");
+
+}
+
+
+document.getElementById("closeEditUserModal")
+    .addEventListener(
+        "click",
+        closeEditUserModal
     );
 
 
-    if (!user) {
-        return;
-    }
-
-
-    const confirmed = confirm(
-        `Delete user "${user.name}"?`
+document.getElementById("cancelEditUser")
+    .addEventListener(
+        "click",
+        closeEditUserModal
     );
 
 
-    if (!confirmed) {
-        return;
-    }
+document.getElementById("editUserModal")
+    .addEventListener("click", function(event) {
 
+        if (event.target === this) {
 
-    const updatedUsers =
-        users.filter(
-            item => item.id !== id
+            closeEditUserModal();
+
+        }
+
+    });
+
+// ==========================================
+// DELETE USER
+// ==========================================
+
+async function deleteUser(id) {
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("users")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (error) {
+
+            console.error("GET USER ERROR:", error);
+
+            alert(
+                "Failed to find user:\n\n" +
+                error.message
+            );
+
+            return;
+        }
+
+        if (!data) {
+
+            alert("User not found.");
+            return;
+        }
+
+        // Protect default admin
+        if (
+            data.username.toLowerCase() === "admin"
+        ) {
+
+            alert(
+                "The default Administrator account " +
+                "cannot be deleted."
+            );
+
+            return;
+        }
+
+        const confirmed = confirm(
+            `Delete user "${data.name}"?\n\n` +
+            "This action cannot be undone."
         );
 
+        if (!confirmed) return;
 
-    saveUsers(updatedUsers);
+        const { error: deleteError } =
+            await supabaseClient
+                .from("users")
+                .delete()
+                .eq("id", id);
 
-    renderUsers();
+        if (deleteError) {
 
+            console.error(
+                "DELETE USER ERROR:",
+                deleteError
+            );
+
+            alert(
+                "Failed to delete user:\n\n" +
+                deleteError.message
+            );
+
+            return;
+        }
+
+        await renderUsers();
+
+        alert("User deleted successfully!");
+
+    } catch (error) {
+
+        console.error(
+            "Unexpected delete user error:",
+            error
+        );
+
+        alert(
+            "Something went wrong:\n\n" +
+            error.message
+        );
+    }
 }
 
 
@@ -2440,14 +2787,38 @@ function deleteUser(id) {
    GLOBAL SEARCH
 ===================================================== */
 
-document.getElementById("globalSearch")
-    .addEventListener("input", function() {
+const globalSearch =
+    document.getElementById("globalSearch");
+
+
+if (globalSearch) {
+
+    globalSearch.addEventListener("input", function() {
+
+        const value = this.value.trim();
 
         const activeSection =
-            document.querySelector(
-                ".page-section.active"
-            );
+            document.querySelector(".page-section.active");
 
+
+        /* ==========================================
+           USERS SEARCH
+        ========================================== */
+
+        if (
+            activeSection &&
+            activeSection.id === "usersSection"
+        ) {
+
+            renderUsers(value);
+
+            return;
+        }
+
+
+        /* ==========================================
+           INVENTORY SEARCH
+        ========================================== */
 
         if (
             activeSection &&
@@ -2456,9 +2827,12 @@ document.getElementById("globalSearch")
 
             renderInventory();
 
+            return;
         }
 
     });
+
+}
 
 
 /* =====================================================
