@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Santo Rosario Elementary School - Stock Management System</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+<!-- =====================================================
+     LOGIN SCREEN
+====================================================== -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-card">
+
+        <div class="login-logo">
+            <img src="images/Santo Rosario Elementary School logo.jpg" alt="School Logo">
+        </div>
+
+        <h1>Santo Rosario Elementary School</h1>
+        <p>Stock Management System</p>
+
+        <form id="loginForm">
+
+            <div class="login-input-group">
+                <label for="loginEmail">
+                    <i class="fa-solid fa-envelope"></i>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <div class="login-input-group">
+                <label for="loginPassword">
+                    <i class="fa-solid fa-lock"></i>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <div id="loginMessage" class="login-message"></div>
+
+            <button type="submit" class="login-btn">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Login
+            </button>
+
+        </form>
+
+    </div>
+</div>
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="school-brand">
+
+            <div class="logo-container">
+
+                <img
+                    src="images/school-logo.png"
+                    alt="School Logo"
+                    class="school-logo"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                >
+
+                <div class="logo-placeholder">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+
+            </div>
+
+            <div class="school-name">
+                <strong>Santo Rosario</strong>
+                <span>Elementary School</span>
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-nav">
+
+            <button class="nav-item active" data-section="dashboard">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </button>
+
+            <button class="nav-item" data-section="inventory">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span>Inventory</span>
+            </button>
+
+            <button class="nav-item" data-section="add-supply">
+                <i class="fa-solid fa-square-plus"></i>
+                <span>Add Supply</span>
+            </button>
+
+            <button class="nav-item" data-section="transact">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                <span>Transact</span>
+            </button>
+
+            <button class="nav-item" data-section="reports">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Reports</span>
+            </button>
+
+            <button class="nav-item" data-section="users">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Stock Management</span>
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             TOP HEADER
+        ================================================== -->
+
+        <header class="top-header">
+
+            <div class="header-left">
+
+                <button class="menu-button" id="menuButton">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="header-title">
+
+                    <h1 id="pageTitle">
+                        Dashboard
+                    </h1>
+
+                    <p id="pageSubtitle">
+                        School supplies overview
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <div class="search-box">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search..."
+                    >
+
+                </div>
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div class="user-info">
+                        <strong>Administrator</strong>
+                        <span>Admin</span>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn" type="button">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                             Logout
+                    </button>
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE CONTAINER
+        ================================================== -->
+
+        <div class="page-container">
+
+
+            <!-- =================================================
+                 DASHBOARD SECTION
+            ================================================== -->
+
+            <section
+                class="page-section active"
+                id="dashboardSection"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+                        <h2>Dashboard</h2>
+                        <p>
+                            Overview of school supplies and inventory.
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        id="dashboardAddSupplyBtn"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Add Supply
+                    </button>
+
+                </div>
+
+
+                <!-- STATISTICS -->
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Supplies</span>
+                            <strong id="totalSupplies">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon success">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+
+                        <div>
+                            <span>In Stock</span>
+                            <strong id="inStock">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon warning">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+
+                        <div>
+                            <span>Low Stock</span>
+                            <strong id="lowStock">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Items</span>
+                            <strong id="totalItems">0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DASHBOARD GRID -->
+
+                <div class="dashboard-grid">
+
+
+                    <!-- INVENTORY PREVIEW -->
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Inventory</h3>
+                                <span>Recent supplies</span>
+                            </div>
+
+                            <button
+                                class="text-btn"
+                                data-section-target="inventory"
+                            >
+                                View All
+                            </button>
+
+                        </div>
+
+
+                        <div class="table-container">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Supply</th>
+                                        <th>Category</th>
+                                        <th>Quantity</th>
+                                        <th>Status</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="dashboardInventoryBody">
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- RECENT TRANSACTIONS -->
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Recent Transactions</h3>
+                                <span>Latest stock activity</span>
+                            </div>
+
+                            <button
+                                class="text-btn"
+                                data-section-target="reports"
+                            >
+                                View All
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="transaction-list"
+                            id="dashboardTransactions"
+                        >
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 INVENTORY SECTION
+            ================================================== -->
+
+            <section
+                class="page-section"
+                id="inventorySection"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+                        <h2>Inventory</h2>
+                        <p>
+                            View and manage all school supplies.
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        data-section-target="add-supply"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Add Supply
+                    </button>
+
+                </div>
+
+
+                <!-- INVENTORY SUMMARY -->
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Supplies</span>
+                            <strong id="inventoryTotalSupplies">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon success">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+
+                        <div>
+                            <span>In Stock</span>
+                            <strong id="inventoryInStock">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon warning">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+
+                        <div>
+                            <span>Low Stock</span>
+                            <strong id="inventoryLowStock">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon danger">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </div>
+
+                        <div>
+                            <span>Out of Stock</span>
+                            <strong id="inventoryOutOfStock">0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- INVENTORY PANEL -->
+
+                <div class="panel">
+
+                    <div class="panel-header inventory-toolbar">
+
+                        <div>
+                            <h3>All Supplies</h3>
+                            <span>Current school supply inventory</span>
+                        </div>
+
+
+                        <div class="inventory-controls">
+
+                            <div class="filter-box">
+
+                                <i class="fa-solid fa-filter"></i>
+
+                                <select id="categoryFilter">
+
+                                    <option value="all">
+                                        All Categories
+                                    </option>
+
+                                    <option value="Writing">
+                                        Writing
+                                    </option>
+
+                                    <option value="Paper">
+                                        Paper
+                                    </option>
+
+                                    <option value="Art">
+                                        Art
+                                    </option>
+
+                                    <option value="Cleaning">
+                                        Cleaning
+                                    </option>
+
+                                    <option value="Office">
+                                        Office
+                                    </option>
+
+                                    <option value="Other">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table id="inventoryTable">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Supply</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Minimum</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="inventoryBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ADD SUPPLY SECTION
+            ================================================== -->
+
+            <section
+                class="page-section"
+                id="addSupplySection"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+                        <h2>Add Supply</h2>
+                        <p>
+                            Add a new school supply to your inventory.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-panel">
+
+                    <form id="addSupplyForm">
+
+                        <div class="form-panel-header">
+
+                            <div class="form-icon">
+                                <i class="fa-solid fa-box-open"></i>
+                            </div>
+
+                            <div>
+                                <h3>Supply Information</h3>
+                                <p>
+                                    Enter the details of the new supply.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="supplyName">
+                                    Supply Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="supplyName"
+                                    placeholder="e.g. Pencils"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="supplyCategory">
+                                    Category
+                                </label>
+
+                                <select
+                                    id="supplyCategory"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Category
+                                    </option>
+
+                                    <option value="Writing">
+                                        Writing
+                                    </option>
+
+                                    <option value="Paper">
+                                        Paper
+                                    </option>
+
+                                    <option value="Art">
+                                        Art
+                                    </option>
+
+                                    <option value="Cleaning">
+                                        Cleaning
+                                    </option>
+
+                                    <option value="Office">
+                                        Office
+                                    </option>
+
+                                    <option value="Other">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="supplyQuantity">
+                                    Initial Quantity
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="supplyQuantity"
+                                    min="0"
+                                    placeholder="0"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="minimumStock">
+                                    Minimum Stock Level
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="minimumStock"
+                                    min="0"
+                                    placeholder="0"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <button
+                                type="button"
+                                class="cancel-btn"
+                                data-section-target="inventory"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="save-btn"
+                            >
+                                <i class="fa-solid fa-plus"></i>
+                                Add Supply
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 TRANSACT SECTION
+            ================================================== -->
+
+            <section
+                class="page-section"
+                id="transactSection"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+                        <h2>Transact</h2>
+                        <p>
+                            Record stock in and stock out transactions.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="transaction-layout">
+
+
+                    <!-- TRANSACTION FORM -->
+
+                    <div class="form-panel">
+
+                        <form id="transactionForm">
+
+                            <div class="form-panel-header">
+
+                                <div class="form-icon">
+                                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                </div>
+
+                                <div>
+                                    <h3>New Transaction</h3>
+                                    <p>
+                                        Update your inventory stock.
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Transaction Type
+                                </label>
+
+                                <div class="transaction-type">
+
+                                    <label class="transaction-option">
+
+                                        <input
+                                            type="radio"
+                                            name="transactionType"
+                                            value="in"
+                                            checked
+                                        >
+
+                                        <span>
+                                            <i class="fa-solid fa-arrow-down"></i>
+                                            Stock In
+                                        </span>
+
+                                    </label>
+
+
+                                    <label class="transaction-option">
+
+                                        <input
+                                            type="radio"
+                                            name="transactionType"
+                                            value="out"
+                                        >
+
+                                        <span>
+                                            <i class="fa-solid fa-arrow-up"></i>
+                                            Stock Out
+                                        </span>
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="transactionSupply">
+                                    Select Supply
+                                </label>
+
+                                <select
+                                    id="transactionSupply"
+                                    required
+                                >
+                                    <option value="">
+                                        Select a supply
+                                    </option>
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="transactionQuantity">
+                                    Quantity
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="transactionQuantity"
+                                    min="1"
+                                    placeholder="Enter quantity"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="transactionRemarks">
+                                    Remarks
+                                </label>
+
+                                <textarea
+                                    id="transactionRemarks"
+                                    rows="4"
+                                    placeholder="Optional remarks..."
+                                ></textarea>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="save-btn full-btn"
+                            >
+                                <i class="fa-solid fa-check"></i>
+                                Save Transaction
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+
+                    <!-- TRANSACTION INFO -->
+
+                    <div class="panel transaction-info-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>How Transactions Work</h3>
+                                <span>Inventory stock movement</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-icon stock-in-icon">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+
+                            <div>
+                                <strong>Stock In</strong>
+                                <p>
+                                    Adds items to the current inventory.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-icon stock-out-icon">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </div>
+
+                            <div>
+                                <strong>Stock Out</strong>
+                                <p>
+                                    Deducts items from the current inventory.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-icon">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+
+                            <div>
+                                <strong>Transaction History</strong>
+                                <p>
+                                    Every transaction is saved for reporting.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 REPORTS SECTION
+            ================================================== -->
+
+            <section
+                class="page-section"
+                id="reportsSection"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+                        <h2>Reports</h2>
+                        <p>
+                            Review inventory and transaction history.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Transactions</span>
+                            <strong id="totalTransactions">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon success">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+
+                        <div>
+                            <span>Stock In</span>
+                            <strong id="totalStockIn">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon warning">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </div>
+
+                        <div>
+                            <span>Stock Out</span>
+                            <strong id="totalStockOut">0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Transaction History</h3>
+                            <span>
+                                Complete record of stock movement
+                            </span>
+                        </div>
+
+                        <button
+                            class="secondary-btn"
+                            id="clearTransactionsBtn"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                            Clear History
+                        </button>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Supply</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Remarks</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="reportsBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 USERS SECTION
+            ================================================== -->
+
+            <section
+                class="page-section"
+                id="usersSection"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+                        <h2>User Management</h2>
+                        <p>
+                            Manage users who can access the system.
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        id="addUserBtn"
+                    >
+                        <i class="fa-solid fa-user-plus"></i>
+                        Add User
+                    </button>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>System Users</h3>
+                            <span>
+                                Registered users
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="usersBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         EDIT SUPPLY MODAL
+    ====================================================== -->
+
+    <div
+        class="modal-overlay"
+        id="editModal"
+    >
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+                    <h3>Edit Supply</h3>
+                    <p>Update supply information.</p>
+                </div>
+
+                <button
+                    class="close-modal"
+                    id="closeEditModal"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <form id="editForm">
+
+                <input
+                    type="hidden"
+                    id="editId"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="editName">
+                        Supply Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editCategory">
+                        Category
+                    </label>
+
+                    <select id="editCategory" required>
+
+                        <option value="Writing">
+                            Writing
+                        </option>
+
+                        <option value="Paper">
+                            Paper
+                        </option>
+
+                        <option value="Art">
+                            Art
+                        </option>
+
+                        <option value="Cleaning">
+                            Cleaning
+                        </option>
+
+                        <option value="Office">
+                            Office
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editQuantity">
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editQuantity"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editMinimum">
+                        Minimum Stock
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editMinimum"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        id="cancelEdit"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="delete-btn"
+                        id="deleteSupplyBtn"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                        Delete Supply
+                        </button>
+
+                        <button
+                        type="submit"
+                        class="save-btn"
+                    >
+                        <i class="fa-solid fa-save"></i>
+                        Save Changes
+                        </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ADD USER MODAL
+    ====================================================== -->
+
+    <div
+        class="modal-overlay"
+        id="userModal"
+    >
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+                    <h3>Add User</h3>
+                    <p>Create a new system user.</p>
+                </div>
+
+                <button
+                    class="close-modal"
+                    id="closeUserModal"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <form id="userForm">
+
+                <div class="form-group">
+
+                    <label for="userName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="userName"
+                        placeholder="Enter full name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="userRole">
+                        Role
+                    </label>
+
+                    <select id="userRole">
+
+                        <option value="Administrator">
+                            Administrator
+                        </option>
+
+                        <option value="Staff">
+                            Staff
+                        </option>
+
+                        <option value="Teacher">
+                            Teacher
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+    <button
+        type="button"
+        class="cancel-btn"
+        id="cancelUser"
+    >
+        Cancel
+    </button>
+
+    <button
+        type="submit"
+        class="save-btn"
+    >
+        <i class="fa-solid fa-user-plus"></i>
+        Add User
+    </button>
+
+</div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
